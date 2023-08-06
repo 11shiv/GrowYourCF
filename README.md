@@ -53,9 +53,9 @@ The main objective of the Codeforces Problem Predictor project is to help Codefo
    - The user interface for the application is created using Streamlit, allowing users to interact with the application through a web-based interface.
 
 # Project Shots:
-![Screenshot 2023-08-06 034337](https://github.com/11shiv/GrowYourCF/assets/103626079/174d5139-56cd-463e-9d3d-3cd4df82e235)
-![Screenshot 2023-08-06 034454](https://github.com/11shiv/GrowYourCF/assets/103626079/419b1e54-628d-4824-9300-0f0c9df72775)
-![Screenshot 2023-08-06 034527](https://github.com/11shiv/GrowYourCF/assets/103626079/02e848f7-5b4b-4601-ade2-d0fc43bd6179)
+## 1 ![Screenshot 2023-08-06 034337](https://github.com/11shiv/GrowYourCF/assets/103626079/174d5139-56cd-463e-9d3d-3cd4df82e235)
+## 2 ![Screenshot 2023-08-06 034454](https://github.com/11shiv/GrowYourCF/assets/103626079/419b1e54-628d-4824-9300-0f0c9df72775)
+## 3 ![Screenshot 2023-08-06 034527](https://github.com/11shiv/GrowYourCF/assets/103626079/02e848f7-5b4b-4601-ade2-d0fc43bd6179)
 
 
 
