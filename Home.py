@@ -69,6 +69,7 @@ def get_user_rating(user_info):
     else:
         return "Rating not available"
 
+
 def problem_predictor(df, new_df, target_rating, target_points):
     df_distance_columns = ['rating', 'points']
     filter_columns = ['contestId', 'index']
@@ -76,9 +77,9 @@ def problem_predictor(df, new_df, target_rating, target_points):
     X_df = df[df_distance_columns].values
     X_new_df = new_df[filter_columns].values
 
-    n_neighbors = 6
+    n_neighbors = 15
 
-    knn = NearestNeighbors(n_neighbors=n_neighbors, metric='correlation')
+    knn = NearestNeighbors(n_neighbors=n_neighbors + len(X_new_df), metric='correlation')
     knn.fit(X_df)
 
     distances, indices = knn.kneighbors([[target_rating, target_points]])
@@ -87,12 +88,15 @@ def problem_predictor(df, new_df, target_rating, target_points):
 
     filtered_closest_points = closest_points[~closest_points[filter_columns].apply(tuple, axis=1).isin(new_df[filter_columns].apply(tuple, axis=1))]
 
-    points_not_in_new_df = df[~df[filter_columns].apply(tuple, axis=1).isin(new_df[filter_columns].apply(tuple, axis=1))]
-    points_not_in_new_df = points_not_in_new_df.sample(n=min(n_neighbors, len(points_not_in_new_df)))
+    # Sort the closest points by rating difference to the target rating
+    filtered_closest_points['rating_difference'] = abs(filtered_closest_points['rating'] - target_rating)
+    filtered_closest_points.sort_values('rating_difference', inplace=True)
 
-    final_8_points = pd.concat([filtered_closest_points, points_not_in_new_df])
+    # Take the top 8 problems with the smallest rating difference
+    final_8_points = filtered_closest_points.head(n_neighbors)
 
     return final_8_points
+
 
 def generate_problem_link(contest_id, index):
     return f"https://codeforces.com/contest/{contest_id}/problem/{index}"
@@ -113,8 +117,8 @@ def main():
                 new_df = pd.DataFrame(user_data(handle), columns=column_names)
                 new_df = new_df.drop('tags', axis=1)
 
-                st.write(f"User Rating: {user_rating}")
-                st.write(f"User Accuracy: {user_accuracy_value:.2f}%")
+                # st.write(f"User Rating: {user_rating}")
+                # st.write(f"User Accuracy: {user_accuracy_value:.2f}%")
                 res = requests.get('https://codeforces.com/api/problemset.problems')
                 df1 = pd.DataFrame(res.json()['result']['problems'])
                 df2 = pd.DataFrame(res.json()['result']['problemStatistics'])
@@ -124,16 +128,16 @@ def main():
                 df = df.drop(columns=column_to_drop)
                 df = df.reset_index(drop=True)
 
-                for index in df.index :
-                    if df['rating'][index] >= 2500:
-                        df = df.drop(index)
+                # for index in df.index :
+                #     if df['rating'][index] >= 2500:
+                #         df = df.drop(index)
 
                 df = df.reset_index(drop=True)
 
                 user_info = get_user_info(handle)
                 user_rating = get_user_rating(user_info)
 
-                your_problems = problem_predictor(df, new_df, user_rating , user_accuracy_value)
+                your_problems = problem_predictor(df, new_df, user_rating + 100 , user_accuracy_value)
 
                 st.write("Recommended Problems:")
                 for index, row in your_problems.iterrows():
